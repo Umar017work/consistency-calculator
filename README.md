@@ -1,3 +1,6 @@
+
+URL=  https://umar017work.github.io/consistency-calculator/
+
 # Consistency Calculator
 
 This web app helps traders calculate the consistency of their trading performance across different days and determine if they meet the required consistency criteria. If consistency is not met, it calculates how much additional profit is needed to achieve it.
@@ -19,3 +22,4 @@ This web app helps traders calculate the consistency of their trading performanc
 3. The app will show:
    - Whether consistency is met.
    - Required additional profit (if any).
+

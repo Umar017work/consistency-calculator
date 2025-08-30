@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consistency Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      animation: gradientShift 8s ease infinite;
+      background-size: 400% 400%;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 
+        0 20px 40px rgba(0,0,0,0.1),
+        0 0 0 1px rgba(255,255,255,0.2);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      transform: translateY(0);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+      box-shadow: 
+        0 30px 60px rgba(0,0,0,0.15),
+        0 0 0 1px rgba(255,255,255,0.3);
+    }
+
+    h2 {
+      margin-bottom: 30px;
+      color: #2d3748;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      z-index: 1;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      border-radius: 12px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s ease;
+      outline: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    input:focus {
+      border-color: #667eea;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 
+        0 0 0 3px rgba(102, 126, 234, 0.1),
+        0 8px 25px rgba(102, 126, 234, 0.15);
+      transform: translateY(-2px);
+    }
+
+    input::placeholder {
+      color: #a0aec0;
+      font-weight: 500;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 16px 30px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 20px;
+      width: 100%;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 
+        0 15px 35px rgba(102, 126, 234, 0.4),
+        0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    button:active {
+      transform: translateY(-1px);
+    }
+
+    .result {
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 12px;
+        background: #f7fafc;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        line-height: 1.6;
+        text-align: left;          /* text wraps naturally */
+        word-wrap: break-word;     /* force long text to break */
+        
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.5s ease, max-height 0.5s ease;
+        max-height: 0;
+        overflow: hidden;          /* hide until expanded */
+        }
+
+    .result.show {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 400px; /* grows smoothly */
+        }
+
+    .result.success {
+      background: linear-gradient(135deg, #f0fff4, #c6f6d5);
+      border-color: #48bb78;
+      color: #22543d;
+    }
+
+    .result.error {
+      background: linear-gradient(135deg, #fff5f5, #fed7d7);
+      border-color: #f56565;
+      color: #742a2a;
+    }
+
+    .result b {
+      color: #667eea;
+      font-weight: 700;
+    }
+
+    .success b {
+      color: #38a169;
+    }
+
+    .error b {
+      color: #e53e3e;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .calculating {
+      animation: pulse 1.5s infinite;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+        margin: 10px;
+      }
+      
+      h2 {
+        font-size: 24px;
+      }
+      
+      input, button {
+        padding: 14px 16px;
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Consistency Calculator</h2>
+    <div class="input-group">
+      <input type="number" id="highestProfit" placeholder="Highest Profit in a Day" />
+    </div>
+    <div class="input-group">
+      <input type="number" id="totalProfit" placeholder="Total Profit" />
+    </div>
+    <div class="input-group">
+      <input type="number" id="consistencyLimit" placeholder="Consistency Limit (%)" />
+    </div>
+    <button onclick="calculateConsistency()">Check Consistency</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function calculateConsistency() {
+      const resultElement = document.getElementById('result');
+      resultElement.className = 'result calculating';
+      resultElement.innerHTML = "Calculating...";
+      
+      setTimeout(() => {
+        const highestProfit = parseFloat(document.getElementById('highestProfit').value);
+        const totalProfit = parseFloat(document.getElementById('totalProfit').value);
+        const consistencyLimit = parseFloat(document.getElementById('consistencyLimit').value);
+
+        if (isNaN(highestProfit) || isNaN(totalProfit) || isNaN(consistencyLimit) || totalProfit <= 0) {
+          resultElement.className = 'result error show';
+          resultElement.innerHTML = "⚠️ Please enter valid values.";
+          return;
+        }
+
+        const maxAllowed = (consistencyLimit / 100) * totalProfit;
+
+        if (highestProfit <= maxAllowed) {
+          resultElement.className = 'result success show';
+          resultElement.innerHTML = `
+            ✅ You meet the consistency rule! <br>
+            Maximum allowed per day: <b>$${maxAllowed.toFixed(2)}</b>
+          `;
+        } else {
+          const requiredTotal = highestProfit / (consistencyLimit / 100);
+          const moreNeeded = requiredTotal - totalProfit;
+
+          resultElement.className = 'result error show';
+          resultElement.innerHTML = `
+            ❌ You do NOT meet consistency. <br>
+            ➡️ You need at least <b>$${moreNeeded.toFixed(2)}</b> more total profit.<br>
+            ➡️ Maximum allowed in one day: <b>$${maxAllowed.toFixed(2)}</b>
+          `;
+        }
+      }, 800);
+    }
+  </script>
+</body>
+</html>
